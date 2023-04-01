@@ -32,7 +32,7 @@ def train(
     output_dir: str = "./lora-alpaca",
     # training hyperparams
     batch_size: int = 128,
-    micro_batch_size: int = 4,
+    micro_batch_size: int = 1,
     num_epochs: int = 3,
     learning_rate: float = 3e-4,
     cutoff_len: int = 256,
@@ -88,7 +88,7 @@ def train(
 
     prompter = Prompter(prompt_template_name)
 
-    device_map = "auto"
+    device_map = {"": "mps"}
     world_size = int(os.environ.get("WORLD_SIZE", 1))
     ddp = world_size != 1
     if ddp:
@@ -109,7 +109,7 @@ def train(
 
     model = LlamaForCausalLM.from_pretrained(
         base_model,
-        load_in_8bit=True,
+        load_in_8bit=False,
         torch_dtype=torch.float16,
         device_map=device_map,
     )
@@ -233,6 +233,7 @@ def train(
             num_train_epochs=num_epochs,
             learning_rate=learning_rate,
             fp16=True,
+            use_mps_device=True,
             logging_steps=10,
             optim="adamw_torch",
             evaluation_strategy="steps" if val_set_size > 0 else "no",

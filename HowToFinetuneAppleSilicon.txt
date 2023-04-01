@@ -1,0 +1,21 @@
+1. Patch for transformers
+
+*** training_args.py	Sat Apr  1 16:45:17 2023
+--- training_args.py.orig	Sat Apr  1 16:24:12 2023
+***************
+*** 1225,1229 ****
+              self.framework == "pt"
+              and is_torch_available()
+!             and (self.device.type != "cuda" and self.device.type != "mps")
+              and (get_xla_device_type(self.device) != "GPU")
+              and (self.fp16 or self.fp16_full_eval)
+--- 1225,1229 ----
+              self.framework == "pt"
+              and is_torch_available()
+!             and (self.device.type != "cuda")
+              and (get_xla_device_type(self.device) != "GPU")
+              and (self.fp16 or self.fp16_full_eval)
+
+2. Run finetune.py
+
+python finetune.py --base_model "decapoda-research/llama-7b-hf" --data_path "alpaca_data_cleaned.json" --output_dir "./lora-alpaca"
